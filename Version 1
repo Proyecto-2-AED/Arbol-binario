@@ -1,0 +1,116 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include <string.h>  //manipulacion de strings
+
+
+typedef struct nodoArbol nodoArbol;
+
+
+struct nodoArbol{
+    char codigo[50];
+    char nombre[50];
+    char descripcion[100];
+    char categoria[100];
+    int rangoI;
+    int rangoF;
+    int costo_total;
+    
+  struct nodoArbol *der;
+  struct nodoArbol *izq;
+};
+
+nodoArbol *raiz=NULL;
+
+void insertarJuguete(char nombrex[], char codigox[], char descripcionx[], char categoriax[], int rangoIx, int rangoFx, int costo_totalx)
+{
+    nodoArbol *nuevo;
+    nuevo = malloc(sizeof(struct nodoArbol));
+	strcpy(nuevo->nombre,nombrex);
+    strcpy(nuevo->codigo,codigox);
+    strcpy(nuevo->descripcion,descripcionx);
+    strcpy(nuevo->categoria, categoriax);
+    nuevo->rangoI = rangoIx; 
+	nuevo->rangoF = rangoFx;
+	nuevo->costo_total = costo_totalx;
+
+    nuevo->izq = NULL;
+    nuevo->der = NULL;
+    
+    if (raiz == NULL)  //si el arbol esta vacio se inserta en la raiz
+        raiz = nuevo;
+             
+    else
+    {
+        nodoArbol *anterior, *aux;
+        anterior = NULL;
+        aux = raiz;
+        while (aux != NULL)
+        {
+            anterior = aux;
+            if (strcmp(nombrex, aux->nombre) < 0){ 
+                aux = aux->izq;}
+            else{
+            	aux = aux->der;
+			}
+                
+        }
+        if (strcmp(nombrex, anterior->nombre) < 0){
+            anterior->izq = nuevo;}
+        else{
+        	anterior->der = nuevo;
+		}
+            
+    }
+}
+
+void imprimirEnOrden(nodoArbol *recorrer)
+{
+    if (recorrer != NULL)
+    {
+        imprimirEnOrden(recorrer->izq);
+        printf("\n\nNOMBRE DEL JUGUETE %s\nCODIGO DEL JUGUETE %s\nDESCRIPCION %s\nCATEGORIA %s\nRANGO DE EDAD %d-%d\nCOSTO TOTAL JUGUETE %d",recorrer->nombre,recorrer->codigo,recorrer->descripcion,recorrer->categoria,recorrer->rangoI,recorrer->rangoF,recorrer->costo_total);
+        imprimirEnOrden(recorrer->der);
+    }
+}
+
+
+void liberar(nodoArbol *aux)
+{
+    if (aux != NULL)
+    {
+        liberar(aux->izq);
+        liberar(aux->der);
+        free(aux);
+    }
+}
+
+int estaVacio(nodoArbol *raiz)
+{
+	if(raiz == NULL)
+		return 1;
+	else
+		return 0;
+}
+
+int esHoja(nodoArbol *hoja)
+{
+	if(hoja->izq == NULL && hoja->der == NULL)
+	{
+		return 1;
+	}
+	else
+		return 0;
+}
+
+int main()
+{
+	
+    insertarJuguete("Patineta","JU001","Rosada de barbie","Deportes",7,18,10000);
+
+    printf("\nREGISTRO DE JUGUETES: ");
+    imprimirEnOrden(raiz);
+
+
+//    liberar(raiz);
+	return 0;
+}
